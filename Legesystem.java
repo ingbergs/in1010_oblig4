@@ -28,6 +28,7 @@ public class Legesystem {
                     flagg ++;
                     linje = sc.nextLine();
                 }
+
                 
                 System.out.println(linje);
             }
