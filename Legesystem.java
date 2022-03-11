@@ -82,7 +82,7 @@ public class Legesystem {
                         leger.leggTil(nyLege);
                     }
                 } else if (flagg == 4) {                            // Fyller reseptlista
-
+                    
                 }
 
                 System.out.println(linje);
