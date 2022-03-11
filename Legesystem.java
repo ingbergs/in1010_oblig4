@@ -19,7 +19,7 @@ public class Legesystem {
             int flagg = 0;
 
             String linje = sc.nextLine();
-            linje = sc.nextLine();                              // 
+            linje = sc.nextLine();                              
 
             while (sc.hasNextLine()) {                          // Går gjennom filen linje for linje
 
