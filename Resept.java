@@ -4,13 +4,13 @@ abstract class Resept {
     protected static int idTeller = 1;
     protected Legemiddel legemiddel;
     protected Lege utskrivendeLege;
-    protected int pasientId;
+    protected Pasient pasient;
     protected int reit; //Antall ganger respten kan brukes.
 
-    public Resept(Legemiddel legemiddel, Lege utskrivendeLege, int pasientId, int reit) {
+    public Resept(Legemiddel legemiddel, Lege utskrivendeLege, Pasient pasient, int reit) {
         this.legemiddel = legemiddel;
         this.utskrivendeLege = utskrivendeLege;
-        this.pasientId = pasientId;
+        this.pasient = pasient;
         this.reit = reit;
         id = idTeller;
         idTeller++;
@@ -28,8 +28,8 @@ abstract class Resept {
         return utskrivendeLege;
     }
 
-    public int hentPasientId() {
-        return pasientId;
+    public Pasient hentPasient() { //Denne var originalt hentPasientID.
+        return pasient;
     }
 
     public int hentReit() {
@@ -55,7 +55,7 @@ abstract class Resept {
         + "\nResept-ID: " + id
         + "\nLegemiddel: " + legemiddel.hentNavn()
         + "\nUtskrevet av: Dr." + utskrivendeLege.hentNavn()
-        + "\nPasient-ID: " + pasientId
+        + "\nPasient: " + pasient
         + "\nAntall reit igjen: " + reit;
     }
 }
