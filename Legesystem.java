@@ -12,7 +12,7 @@ public class Legesystem {
         // Legemidler   -> IndeksertListe
         // Resepter     -> IndeksertListe
         // Person       -> IndeksertListe
-        // test
+        // test2
 
         try {
             File fil = new File(filnavn);
