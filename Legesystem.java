@@ -12,11 +12,12 @@ public class Legesystem {
         // Legemidler   -> IndeksertListe
         // Resepter     -> IndeksertListe
         // Person       -> IndeksertListe
+        // test2
 
         try {
             File fil = new File(filnavn);
             Scanner sc = new Scanner(fil);
-            
+
         } catch (FileNotFoundException e) {
             System.out.println("Error: fil ikke funnet");
             e.printStackTrace();
