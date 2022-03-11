@@ -19,15 +19,15 @@ public class Legesystem {
             int flagg = 0;
 
             String linje = sc.nextLine();
-            linje = sc.nextLine();                              
 
             while (sc.hasNextLine()) {                          // Går gjennom filen linje for linje
+
+                linje = sc.nextLine();
 
                 if (linje.charAt(0) == '#') {
                     flagg ++;
                     linje = sc.nextLine();
                 }
-
 
                 System.out.println(linje);
             }
