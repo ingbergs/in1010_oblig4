@@ -79,19 +79,4 @@ abstract class Lenkeliste<T> implements Liste<T> {
             return x;
         }
     }
-    
-    public static void main(String[] args) {
-        Koe<Integer> l = new Koe<>();
-
-        l.leggTil(1);
-        l.leggTil(2);
-        l.leggTil(3);
-        l.leggTil(4);
-        l.leggTil(5);
-
-        for (int tall : l) {
-            System.out.println(tall);
-        }
-    }
-
 }
