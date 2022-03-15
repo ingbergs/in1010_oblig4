@@ -18,9 +18,9 @@ public class Legesystem {
 
     public static void main(String[] args) {
 
-        // lesFraFil("legedata.txt");
+        lesFraFil("legedata.txt");
 
-        lesFraFil("nyStorFil.txt");
+        // lesFraFil("nyStorFil.txt");
 
 
         //tester:
@@ -36,15 +36,15 @@ public class Legesystem {
         //     System.out.println(lege);
         // }
 
-        // for (Resept resept : resepter) {
-        //     System.out.println(resept);
-        // }
+        for (Resept resept : resepter) {
+            System.out.println(resept);
+        }
 
-        //TODO: mange sjekker for gyldig input && "Denne legen er spsialist" && "kr mangler i utskriften til BlaaResept"
+        //TODO:"Denne legen er spsialist" && "kr" mangler i utskriften til BlaaResept
 
     }
     
-    public static void lesFraFil(String filnavn) {              // Fyller instansvariablene med info fra fil
+    public static void lesFraFil(String filnavn) {                                  // Fyller instansvariablene med info fra fil
 
         File fil = null;
         Scanner sc = null;
@@ -63,7 +63,7 @@ public class Legesystem {
 
         String linje = sc.nextLine();
 
-        while (sc.hasNextLine()) {                              // Går gjennom filen linje for linje
+        while (sc.hasNextLine()) {                                                  // Går gjennom filen linje for linje
 
             linje = sc.nextLine();
 
@@ -72,18 +72,26 @@ public class Legesystem {
                 linje = sc.nextLine();
             }
 
-            if (flagg == 0) {                                   // Fyller pasientlista
-                String[] deler = linje.strip().split(",");             
+            String[] deler = linje.split(",");                                      // Deler opp linjen i biter
+
+            for (int i = 0; i < deler.length; i++) {                                // Fjerner all whitespace før og etter hver bit av linjen
+                deler[i] = deler[i].strip(); 
+            }
+            
+            if (!sjekkGyldigFormat(deler, flagg)) {                                 // Sjekker om formatet på dataen er korrekt
+                continue;
+            }
+
+            if (flagg == 0) {                                                       // Fyller pasientlista
+                
                 Pasient nyPasient = new Pasient(deler[0],deler[1]);
                 pasienter.leggTil(nyPasient);
 
-            } else if (flagg == 1) {                            // Fyller legemiddellista
-
-                String[] deler = linje.strip().split(",");
+            } else if (flagg == 1) {                                                // Fyller legemiddellista
 
                 String navn = deler[0];
                 String type = deler[1];
-                int pris = (int) Double.parseDouble(deler[2]);  // Caster fra String til double til int. Runder utelukkende ned for oeyeblikket
+            int pris = (int) Double.parseDouble(deler[2]);                          // Caster fra String til double til int. Runder utelukkende ned for oeyeblikket
                 double virkestoff = Double.parseDouble(deler[3].strip());
 
                 if (type.equals("vanlig")) {
@@ -101,14 +109,11 @@ public class Legesystem {
                     legemidler.leggTil(nyttNarkotisk);
 
                 } else {
-                    // throw navneerror?
                     System.out.println("Navneerror: legemiddeltype " + type + " støttes ikke.");
                     continue;
                 }
 
-            } else if (flagg == 2) {                            // Fyller legelista
-
-                String[] deler = linje.strip().split(",");
+            } else if (flagg == 2) {                                                // Fyller legelista
 
                 if (Integer.parseInt(deler[1]) != 0) {
 
@@ -122,15 +127,13 @@ public class Legesystem {
 
                 }
 
-            } else if (flagg == 3) {                            // Fyller reseptlista
-                
-                String[] deler = linje.strip().split(",");
+            } else if (flagg == 3) {                                                // Fyller reseptlista
 
                 Legemiddel legemiddel = null;
                 Pasient pasient = null;
 
                 try {
-                legemiddel = legemidler.hent(Integer.parseInt(deler[0]) - 1);    // - 1 for å gjøre om fra nummer til indeks
+                legemiddel = legemidler.hent(Integer.parseInt(deler[0]) - 1);       // - 1 for å gjøre om fra nummer til indeks
                 
                 } catch (UgyldigListeindeks e) {
                     System.out.println("Error: legemiddelindeksfeil. " + e);
@@ -158,7 +161,6 @@ public class Legesystem {
                 }
 
                 if (lege == null) {
-                    //throw navneerror?
                     System.out.println("Navneerror: legen " + deler[1] + " er ikke i systemet.");
                     continue;
                 }
@@ -208,12 +210,114 @@ public class Legesystem {
                     }
 
                 } else {
-                    // throw navneerror?
                     System.out.println("Navneerror: resepttype " + deler[3] + " støttes ikke.");
                     continue;
                 }
             }
         }    
         sc.close();
+    }
+
+    private static boolean sjekkGyldigFormat(String[] deler, int flagg) {
+
+        if (flagg == 0) {               // Sjekker pasientformat
+            return (deler.length == 2);
+
+        } else if (flagg == 1) {        // Sjekker legemiddelformat
+
+            if (deler[1].equals("vanedannende") || deler[1].equals("narkotisk")) {
+
+                if (deler.length == 5) {
+
+                    try {
+                        int test = (int) Double.parseDouble(deler[2]);
+                        test = (int) Double.parseDouble(deler[3]);
+                        test = (int) Double.parseDouble(deler[4]);
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error: " + e);
+                        return false;
+                    }
+                    
+                    return true;
+
+                } else {
+                    return false;
+                }
+
+            } else if (deler.length == 4) {
+
+                try {
+                    int test = (int) Double.parseDouble(deler[2]);
+                    test = (int) Double.parseDouble(deler[3]);
+
+                } catch (NumberFormatException e) {
+                    System.out.println("Error: " + e);
+                    return false;
+                }
+
+                return true;
+
+            } else {
+                return false;
+            }
+
+        } else if (flagg == 2) {        // Sjekker legeformat
+            
+            if (deler.length == 2) {
+
+                try {
+                    int test = Integer.parseInt(deler[1]);
+
+                } catch (NumberFormatException e) {
+                    System.out.println("Error: " + e);
+                    return false;
+                }
+
+                return true;    
+
+            } else {
+                return false;
+            }
+
+        } else if (flagg == 3) {        // Sjekker reseptformat
+
+            if (deler[2].equals("militaer")) {
+
+                if (deler.length == 4) {
+
+                    try {
+                        int test = Integer.parseInt(deler[0]);
+                        test = Integer.parseInt(deler[2]);
+    
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error: " + e);
+                        return false;
+                    }
+    
+                    return true; 
+                }
+                
+            } else if (deler.length == 5) {
+
+                try {
+                    int test = Integer.parseInt(deler[0]);
+                    test = Integer.parseInt(deler[2]);
+                    test = Integer.parseInt(deler[4]);
+
+                } catch (NumberFormatException e) {
+                    System.out.println("Error: " + e);
+                    return false;
+                }
+
+                return true; 
+
+            } else {
+                return false;
+            }
+            
+        }
+
+        return false;
     }
 }
