@@ -16,7 +16,7 @@ public class HvitResept extends Resept {
     @Override
     public String toString() {
         return super.toString()
-        + "\nType/Farge: " + farge()
-        + "\nPris: " + prisAaBetale() + "kr";
+        + "\n\tType/Farge: " + farge()
+        + "\n\tPris: " + prisAaBetale() + "kr";
     }
 }

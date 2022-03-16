@@ -72,6 +72,6 @@ public class Lege implements Comparable<Lege>{
 
     @Override
     public String toString() {
-        return "\n__Lege__\nNavn: " + navn;
+        return "\nNavn: " + navn + "\nAntall utskrevne resepter: " + utskrevneResepter.stoerrelse();
     }
 }

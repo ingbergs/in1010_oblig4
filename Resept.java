@@ -51,11 +51,10 @@ abstract class Resept {
 
     @Override
     public String toString() {
-        return "\n__Reseptinfo__"
-        + "\nResept-ID: " + id
-        + "\nLegemiddel: " + legemiddel.hentNavn()
-        + "\nUtskrevet av: Dr." + utskrivendeLege.hentNavn()
-        + "\nPasient: " + pasient
-        + "\nAntall reit igjen: " + reit;
+        return "\n\tResept-ID: " + id
+        + "\n\tLegemiddel: " + legemiddel.hentNavn()
+        + "\n\tUtskrevet av: " + utskrivendeLege.hentNavn()
+        //+ "\nPasient: " + pasient.hentNavn()
+        + "\n\tAntall reit igjen: " + reit;
     }
 }

@@ -35,7 +35,6 @@ public class Pasient {
 
     @Override
     public String toString(){
-        return "Pasient. \nNavn: " + navn + ". \nFodselsnummer: "+ fodselsnummer + ". \nID: " 
-        + id + ". \nResepter: " + reseptStabel + ".";
+        return "\nID:"+ id + "\nNavn: " + navn + "\nFodselsnummer: "+ fodselsnummer + "\nResepter: " + reseptStabel;
     }
 }
