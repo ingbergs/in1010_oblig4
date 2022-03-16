@@ -18,7 +18,7 @@ public class Legesystem {
 
     public static void main(String[] args) {
 
-        lesFraFil("legedata.txt");
+        lesFraFil("legedatar.txt");
 
         // lesFraFil("nyStorFil.txt");
 
@@ -55,13 +55,13 @@ public class Legesystem {
             sc = new Scanner(fil);
             
         } catch (FileNotFoundException e) {
-            System.out.println("Error: fil ikke funnet");
-            e.printStackTrace();
+            System.out.println("Error: fil \"" + filnavn + "\" ikke funnet");
+            return;
         }
 
         int flagg = 0;
 
-        String linje = sc.nextLine();
+        String linje = sc.nextLine();                                               // Hopper over foerste linje, siden vi vet at den ikke har data
 
         while (sc.hasNextLine()) {                                                  // Går gjennom filen linje for linje
 
@@ -92,19 +92,19 @@ public class Legesystem {
                 String navn = deler[0];
                 String type = deler[1];
             int pris = (int) Double.parseDouble(deler[2]);                          // Caster fra String til double til int. Runder utelukkende ned for oeyeblikket
-                double virkestoff = Double.parseDouble(deler[3].strip());
+                double virkestoff = Double.parseDouble(deler[3]);
 
                 if (type.equals("vanlig")) {
                     Vanlig nyttVanlig = new Vanlig(navn, pris, virkestoff);
                     legemidler.leggTil(nyttVanlig);
 
                 } else if (type.equals("vanedannende")) {
-                    int styrke = Integer.parseInt(deler[4].strip());
+                    int styrke = Integer.parseInt(deler[4]);
                     Vanedannende nyttVanedannende = new Vanedannende(navn, pris, virkestoff, styrke);
                     legemidler.leggTil(nyttVanedannende);
 
                 } else if (type.equals("narkotisk")) {
-                    int styrke = Integer.parseInt(deler[4].strip());
+                    int styrke = Integer.parseInt(deler[4]);
                     Narkotisk nyttNarkotisk = new Narkotisk(navn, pris, virkestoff, styrke);
                     legemidler.leggTil(nyttNarkotisk);
 
@@ -124,7 +124,6 @@ public class Legesystem {
 
                     Lege nyLege = new Lege(deler[0]);
                     leger.leggTil(nyLege);
-
                 }
 
             } else if (flagg == 3) {                                                // Fyller reseptlista
@@ -319,5 +318,34 @@ public class Legesystem {
         }
 
         return false;
+    }
+
+    public static boolean sjekkOmNumerisk(String s) {
+        for (int i = 0; i < s.length(); i++) {
+
+            boolean punktum = false;
+
+            if (i == 0 && s.charAt(i) == '-') {
+                if (s.length() == 1) {
+                    return false;
+                } else {
+                    continue;
+                }
+            }
+
+            if (i != 0 && s.charAt(i) == '.') {
+                if (!punktum) {
+                    punktum = true;
+                } else {
+                    return false;
+                }
+            }
+
+            if (! Character.isDigit(s.charAt(i))) {
+                return false;
+            }
+
+        }
+        return true;
     }
 }
