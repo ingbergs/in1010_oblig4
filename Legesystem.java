@@ -764,12 +764,12 @@ public class Legesystem {
             s = resept.hentId() + "," + resept.hentLege().hentNavn() +","+ resept.hentPasient().hentID();
             if (resept instanceof BlaaResept){
                 s += ",blaa," + resept.hentReit();
-            } else if(resept instanceof HvitResept){
-                s += ",hvit," + resept.hentReit();
+            } else if(resept instanceof MilResept){
+                s += ",militaer";
             } else if (resept instanceof PResept){
                 s +=",p," + resept.hentReit();
             } else{
-                s +=",militaer";
+                s +=",hvit," + resept.hentReit();
             }
             f.println(s);
         }
