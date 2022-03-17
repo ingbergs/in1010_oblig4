@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.InputMismatchException;
+import java.io.PrintWriter;
 
 public class Legesystem {
 
@@ -117,7 +118,7 @@ public class Legesystem {
                 Pasient pasient = null;
 
                 try {
-                legemiddel = legemidler.hent(Integer.parseInt(deler[0]) - 1);       // - 1 for aa gjoere om fra nummer til indeks
+                    legemiddel = legemidler.hent(Integer.parseInt(deler[0]) - 1);   // - 1 for aa gjoere om fra nummer til indeks
                 
                 } catch (UgyldigListeindeks e) {
                     System.out.println("Error: legemiddelindeksfeil. " + e);
@@ -125,7 +126,7 @@ public class Legesystem {
                 }
 
                 try {
-                pasient = pasienter.hent(Integer.parseInt(deler[2]) - 1);           // - 1 for aa gjore om fra nummer til indeks
+                    pasient = pasienter.hent(Integer.parseInt(deler[2]) - 1);       // - 1 for aa gjore om fra nummer til indeks
                 } catch (UgyldigListeindeks e) {
                     System.out.println("Error: pasientindeksfeil. " + e);
                     continue;
@@ -164,7 +165,6 @@ public class Legesystem {
                 } else if (deler[3].equals("blaa")) {
 
                     try {
-
                         Resept nyResept = lege.skrivBlaaResept(legemiddel, pasient, reit);
                         resepter.leggTil(nyResept);
                         pasient.nyResept(nyResept);
@@ -177,7 +177,6 @@ public class Legesystem {
                 } else if (deler[3].equals("militaer")) {
 
                     try {
-
                         Resept nyResept = lege.skrivMilResept(legemiddel, pasient);
                         resepter.leggTil(nyResept);  
                         pasient.nyResept(nyResept);
@@ -244,7 +243,7 @@ public class Legesystem {
 
         } else if (flagg == 3) {        // Sjekker reseptformat
 
-            if (deler[2].equals("militaer")) {
+            if (deler[3].equals("militaer")) {
 
                 if (deler.length == 4) {
 
@@ -265,7 +264,7 @@ public class Legesystem {
         return false;
     }
 
-    public static boolean sjekkOmNumerisk(String s) {                               // Sjekker om en String kan gjøres om til et tall (uten exceptions)
+    public static boolean sjekkOmNumerisk(String s) {                               // Sjekker om en String kan gjores om til et tall (uten exceptions)
 
         boolean punktum = false;
 
@@ -296,6 +295,7 @@ public class Legesystem {
     // Oppgave E2
     public static void meny() {
         String valg = "";
+        String filnavn;
         String s = "\n___LEGESYSTEM___"
         + "\nHva vil du gjore?"
         + "\n1: Skriv ut fullstendig oversikt"
@@ -318,13 +318,15 @@ public class Legesystem {
                 nyttElement(sc);
             }
             else if (valg.equals("3")) {
-                brukResept();
+                brukResept(sc);
             }
             else if (valg.equals("4")) {
-                skrivStatistikk();
+                skrivStatistikk(sc);
             }
             else if (valg.equals("5")) {
-                skrivTilFil();
+                System.out.println("Hva vil du at filen skal hete?\n");
+                filnavn = sc.next();
+                skrivTilFil(filnavn + ".txt");
             }
             else if (!valg.equals("6")) {
                 System.out.println("Vennligst velg et tall 1-6.\n");
@@ -393,7 +395,7 @@ public class Legesystem {
 
         System.out.println("Navn: ");
 
-        sc.nextLine();                                          // Leser den gjenværende newline-characteren (\n) fra forrige .next()-kall
+        sc.nextLine();                                          // Leser den gjenvaerende newline-characteren (\n) fra forrige .next()-kall
         navn = sc.nextLine();
         System.out.println("Spesialist (Y/N): ");
         spesialist = sc.next();
@@ -414,7 +416,7 @@ public class Legesystem {
         Pasient nyPasient;
 
         System.out.println("Navn: ");
-        sc.nextLine();                                          // Leser den gjenværende newline-characteren (\n) fra forrige .next()-kall
+        sc.nextLine();                                          // Leser den gjenvaerende newline-characteren (\n) fra forrige .next()-kall
         navn = sc.nextLine();
         System.out.println("Fodselsnummer: ");
         fodselsnummer = sc.next();
@@ -436,7 +438,7 @@ public class Legesystem {
         Legemiddel legemiddel = null;
         int reit;
 
-        sc.nextLine();                                          // Leser den gjenværende newline-characteren (\n) fra forrige .next()-kall
+        sc.nextLine();                                          // Leser den gjenvaerende newline-characteren (\n) fra forrige .next()-kall
 
         String legeNavn = sc.nextLine();//TODO hvis tid. Mulighet for aa legge til lege hvis ikke i system.
         while (lege != null) {
@@ -537,7 +539,7 @@ public class Legesystem {
 
         System.out.print("Navn: ");
 
-        sc.nextLine();                                          // Leser den gjenværende newline-characteren (\n) fra forrige .next()-kall
+        sc.nextLine();                                          // Leser den gjenvaerende newline-characteren (\n) fra forrige .next()-kall
         navn = sc.nextLine(); 
         System.out.println();
         
@@ -581,24 +583,197 @@ public class Legesystem {
         legemidler.leggTil(nyttLegemiddel);
     }
 
-    public static void brukResept() {        
-        // String valgtPasient;
-        // Scanner sc = new Scanner(System.in);
+    public static void brukResept(Scanner sc) {        
+        Pasient valgtPasient=null;
+        Resept valgtResept=null;
+        int inp;
+        boolean pasientFunnet=false;
+        boolean reseptFunnet=false;
+        //Scanner sc = new Scanner(System.in);
 
-        // System.out.println("Hvilken pasient vil du se resepter for?");
-        // for (Pasient pasient : pasienter) {
-        //     System.out.println(pasient.hentID()+ ":" + pasient.hentNavn() + " (fnr " + pasient.hentFodselsnr() + ")");
-        // }
-        // valgtPasient = sc.next();
+        System.out.println("Hvilken pasient vil du se resepter for?");
+        for (Pasient pasient : pasienter) {
+            System.out.println(pasient.hentID()+ ":" + pasient.hentNavn() + " (fnr " + pasient.hentFodselsnr() + ")");
+        }
+        inp = sc.nextInt();
+        for (Pasient pasient : pasienter) {
+            if (pasient.hentID()==inp && !pasientFunnet){
+                valgtPasient=pasient;
+                pasientFunnet=true;
+            }
+        }
 
-        // System.out.println("Valgt pasient: " + valgtPasient);
-        // System.out.println("Hvilken resept vil du bruke?");
-        // System.out.println("Brukte resept");
-        // System.out.println("Kunne ikke bruke resept");
-        // System.out.println("Hovedmeny");
+        System.out.println("Valgt pasient: " + valgtPasient.hentNavn() + " (fnr " + valgtPasient.hentFodselsnr() + ")\n"); //Navn + fodselsnummer
+        Stabel<Resept> pasientResepter = valgtPasient.hentReseptStabel();
+        if (pasientResepter.stoerrelse()==0) {
+            System.out.println("Ingen resepter");
+        } else {
+            System.out.println("Hvilken resept vil du bruke?");
+            
+            int teller=0;
+            for (Resept resept : pasientResepter) {
+                System.out.println(teller+ ":" + resept.hentLegemiddel().hentNavn() + " ("+ resept.hentReit() + " reit)");
+                teller++;
+            }
+            inp = sc.nextInt();
+            teller=0;
+            for (Resept resept : pasientResepter) {
+                if (teller==inp && !reseptFunnet){
+                    valgtResept=resept;
+                    reseptFunnet=true;
+                }
+                teller++;
+            }
+            if (valgtResept.bruk()){
+                System.out.println("Brukte resept paa " + valgtResept.hentLegemiddel().hentNavn()+ ". Antall gjenvaerende reit: " + valgtResept.hentReit() + "\n");
+            } else {
+                System.out.println("Kunne ikke bruke resept paa "+ valgtResept.hentLegemiddel().hentNavn()+ " (ingen gjenvaerende reit).");
+            }
+        }
     }
     
-    public static void skrivStatistikk() {}
+    public static void skrivStatistikk(Scanner sc) {
 
-    public static void skrivTilFil() {}
+        String valg = "";
+
+        while (!valg.equals("5")) {
+
+        System.out.println("\nHvilken statistikk vil du se?\n" +
+        "1: Totalt antall resepter paa vanedannende legemidler\n" +
+        "2: Totalt antall resepter paa narkotiske legemidler\n" +
+        "3: Navn paa alle leger som har skrevet ut minst en resept paa narkotiske legemidler\n" +
+        "4: Navn paa alle pasienter som har minst en gyldig resept paa narkotiske legemidler\n" +
+        "5: Tilbake");
+
+            valg = sc.next();
+
+            if (valg.equals("1")) {         // Totalt antall resepter paa vanedannende legemidler
+            
+                int teller = 0;
+                for (Resept resept : resepter) {
+                    if (resept.hentLegemiddel() instanceof Vanedannende) {
+                        teller += 1;
+                    }
+                }
+
+                System.out.println("\nTotalt antall resepter paa vanedannende legemidler: " + teller);
+
+            } else if (valg.equals("2")) {  // Totalt antall resepter paa narkotiske legemidler
+            
+                int teller = 0;
+                for (Resept resept : resepter) {
+                    if (resept.hentLegemiddel() instanceof Narkotisk) {
+                        teller += 1;
+                    }
+                }
+
+                System.out.println("\nTotalt antall resepter paa narkotiske legemidler: " + teller);
+
+            } else if (valg.equals("3")) {  // Navn paa leger som har skrevet ut minst en resept paa narkotisk + antall slike resepter per lege
+
+                System.out.println("\nFoelgende leger har skrevet ut minst en resept paa narkotiske legemidler:\n");
+
+                for (Lege lege : leger) {
+                    int teller = 0;
+                    if (!(lege instanceof Spesialist)) {
+                        continue;
+                    }
+                    for (Resept resept : lege.hentUtskrevneResepter()) {
+                        if (resept.hentLegemiddel() instanceof Narkotisk) {
+                            teller += 1;
+                        }
+                    }
+                    if (teller == 0) {
+                        continue;
+                    }
+
+                    System.out.println("Navn:\t\t\t" + lege.hentNavn() + "\nAntall utskrevne narkotiske resepter:\t" + teller);
+                }
+                
+            } else if (valg.equals("4")) {  // Navn paa alle pasienter som har minst en gyldig resept paa narkotisk + antallet per pasient
+
+                System.out.println("\nFoelgende pasienter har minst en gyldig resept paa narkotiske legemidler:\n");
+
+                for (Pasient pasient : pasienter) {
+                    int teller = 0;
+
+                    for (Resept resept : pasient.hentReseptStabel()) {
+                        if (resept.hentLegemiddel() instanceof Narkotisk) {
+                            teller += 1;
+                        }
+                    }
+                    if (teller == 0) {
+                        continue;
+                    }
+
+                    System.out.println("Navn:\t\t\t" + pasient.hentNavn() + "\nAntall utskrevne narkotiske resepter:\t" + teller);
+                }
+
+            } else {
+                System.out.println("Skriv et tall 1-5");
+            }
+        }
+    }
+
+    public static void skrivTilFil(String filnavn) {
+        String s;
+        PrintWriter f = null;
+        //Narkotisk narkotisk;
+        //Vanedannende vanedannede;
+        //Spesialist spesialist;
+        try {
+            f = new PrintWriter(filnavn); 
+        } catch (Exception e) {
+            System.out.println("Noe gikk galt :(");
+            System.exit(1);
+        }
+
+        f.println("# Pasienter (navn, fnr)");
+        for(Pasient pasient : pasienter){
+            f.println(pasient.hentNavn() + "," + pasient.hentFodselsnr());
+        }
+        f.println("# Legemidler (navn,type,pris,virkestoff,[styrke])");
+        for(Legemiddel legemiddel : legemidler){
+            s=legemiddel.hentNavn();
+            if(legemiddel instanceof Narkotisk){
+                Narkotisk narkotisk = (Narkotisk)legemiddel;
+                s+=",narkotisk," + narkotisk.hentPris() + "," + narkotisk.hentVirkestoff() + "," + narkotisk.hentNarkotiskStyrke();
+            } else if(legemiddel instanceof Vanedannende){
+                Vanedannende vanedannende = (Vanedannende)legemiddel;
+                s += ",vanedannende"+ vanedannende.hentPris() + "," + vanedannende.hentVirkestoff() + "," + vanedannende.hentVanedannendeStyrke();
+            } else {
+                s+=",vanlig"+ legemiddel.hentPris() + "," + legemiddel.hentVirkestoff();
+            }
+            f.println(s);
+
+        }
+
+        f.println("# Leger (navn,kontrollid / 0 hvis vanlig lege)");
+        for(Lege lege : leger){
+            s=lege.hentNavn();
+            if(lege instanceof Spesialist){
+                Spesialist spesialist = (Spesialist) lege;
+                s+= "," + spesialist.hentKontrollID();
+            } else{
+                s+= ",0";
+            }
+            f.println(s);
+        }
+        f.println("# Resepter (legemiddelNummer,legeNavn,pasientID,type,[reit])");
+        for(Resept resept : resepter){
+            s = resept.hentId() + "," + resept.hentLege().hentNavn() +","+ resept.hentPasient().hentID();
+            if (resept instanceof BlaaResept){
+                s += ",blaa," + resept.hentReit();
+            } else if(resept instanceof HvitResept){
+                s += ",hvit," + resept.hentReit();
+            } else if (resept instanceof PResept){
+                s +=",p," + resept.hentReit();
+            } else{
+                s +=",militaer";
+            }
+            f.println(s);
+        }
+
+        f.close();
+    }
 }
