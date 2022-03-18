@@ -39,9 +39,8 @@ abstract class Legemiddel {
 
     @Override
     public String toString() {
-        return "\n__Legemiddel__"
+        return "\nID: " + hentId() 
         + "\nNavn: " + hentNavn()
-        + "\nID: " + hentId()
         + "\nPris: " + hentPris() + "kr"
         + "\nVirkestoff: " + hentVirkestoff() +"mg";
     }

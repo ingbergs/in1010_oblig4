@@ -47,7 +47,7 @@ abstract class Lenkeliste<T> implements Liste<T> {
         String s = "";
         Node node = foerste;
         while (node != null) {
-            s+= node.data.toString() + " -> "; // node.data.toString() i tilfelle node ikke er String
+            s+= node.data.toString() + "\n"; // node.data.toString() i tilfelle node ikke er String
             node = node.neste;
         }
         return s;
