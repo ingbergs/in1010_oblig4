@@ -18,7 +18,7 @@ public class Legesystem {
     // Resepter     -> IndeksertListe
     private static IndeksertListe<Resept> resepter = new IndeksertListe<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
 
         lesFraFil("legedata.txt");
         // lesFraFil("nyStorFil.txt");
@@ -356,7 +356,7 @@ public class Legesystem {
     }
 
     // Oppgave E4
-    public static void nyttElement(Scanner sc) {
+    public static void nyttElement(Scanner sc){
         String s = "\n___LEGG TIL ELEMENT___"
         + "\nHva vil du legge til?"
         + "\n1: Lege"
@@ -374,7 +374,11 @@ public class Legesystem {
             } else if (valg.equals("2")) { 
                 leggTilPasient(sc);
             } else if (valg.equals("3")) {
-                leggTilResept(sc);   
+                try {
+                    leggTilResept(sc);
+                } catch (UlovligUtskrift e){
+                    System.out.println(e);
+                } 
             } else if (valg.equals("4")) {
                 leggTilLegemiddel(sc);
             } else if (valg.equals("5")) { //Tilbake
@@ -425,7 +429,105 @@ public class Legesystem {
         
     }
 
-    public static void leggTilResept(Scanner sc){
+    public static void leggTilResept(Scanner sc) throws UlovligUtskrift{
+        Legemiddel legemiddel = null;
+        Pasient pasient = null;
+        Lege lege = null;
+        String type = null;
+        int reit = 0;
+        boolean funnet = false;
+        int inp;
+        String temp;
+        Resept nyResept=null;
+
+        System.out.println("Hvilket legemiddel skal resepten vaere for?");
+        for (Legemiddel l : legemidler) {
+            System.out.println(l.hentId()+ ":" + l.hentNavn() + " , " + l.hentVirkestoff() + " mg");
+        }
+        inp = sc.nextInt();
+        for (Legemiddel l : legemidler) {
+            if (l.hentId()==inp && !funnet){
+                legemiddel=l;
+                funnet=true;
+            }
+        }
+        funnet = false;
+
+        System.out.println("Hvilken pasient skal resepten vaere for?");
+        for (Pasient p : pasienter) {
+            System.out.println(p.hentID()+ ":" + p.hentNavn() + " (fnr " + p.hentFodselsnr() + ")");
+        }
+        inp = sc.nextInt();
+        for (Pasient p : pasienter) {
+            if (p.hentID()==inp && !funnet){
+                pasient=p;
+                funnet=true;
+            }
+        }
+        funnet = false;
+
+        System.out.println("Hvilken lege skal skrive ut resepten?");
+        int teller = 1;
+        for (Lege l : leger) {
+            System.out.println(teller+ ":" + l.hentNavn() ); //TO DO: legge til kontrollID?
+            teller++;
+        }
+        inp = sc.nextInt();
+    
+        teller = 0;
+        for (Lege l : leger) {
+            if (teller==inp && !funnet){
+                lege=l;
+                funnet=true;
+            }
+            teller ++;
+        }
+        funnet = false;
+        System.out.println(lege);
+
+        System.out.println("Velg type resept:\nB: Blaa\nH: Hvit");
+        temp = sc.next();
+        if (temp.equals("B")){
+            type = "blaa";
+        } else if (temp.equals("H")){
+            System.out.println("\nM: Militaerresept\nP: P-resept\nV: Vanlig hvit");
+            temp = sc.next();
+            if (temp.equals("M")) {
+                type = "militaer";
+            } else if (temp.equals("P")){
+                type = "p";
+            } else {
+                type = "hvit";
+            }
+        } else {
+            System.out.println("Ugyldig input");
+            return; // haaper vi kommer tilbake til hovedmenyen
+        }
+
+        if (!type.equals("militaer")) {
+            System.out.println("Velg antall reit:");
+            reit = sc.nextInt();
+        }
+
+        if (type.equals("blaa")) {
+            nyResept=lege.skrivBlaaResept(legemiddel, pasient, reit);
+        } else if (type.equals("militaer")) {
+            nyResept=lege.skrivMilResept(legemiddel, pasient);
+        } else if (type.equals("p")) {
+            nyResept=lege.skrivPResept(legemiddel, pasient, reit);
+        } else {
+            nyResept=lege.skrivHvitResept(legemiddel, pasient, reit);
+        }
+        
+        pasient.nyResept(nyResept);
+
+        System.out.println("Vellykket opprettelse av\n" + nyResept);
+        
+
+
+
+
+        /* Edvin sin
         String farge = "";
         String type = "";
         String s = "Hvilken type resept: ";
@@ -518,6 +620,103 @@ public class Legesystem {
                     
         }
         // Resept(Legemiddel legemiddel, Lege utskrivendeLege, Pasient pasient, int reit)
+
+        */
+
+        /* Sivert sin:
+        Legemiddel legemiddel = null;
+        Pasient pasient = null;
+
+        try {
+            legemiddel = legemidler.hent(Integer.parseInt(deler[0]) - 1);   // - 1 for aa gjoere om fra nummer til indeks
+        
+        } catch (UgyldigListeindeks e) {
+            System.out.println("Error: legemiddelindeksfeil. " + e);
+            continue;
+        }
+
+        try {
+            pasient = pasienter.hent(Integer.parseInt(deler[2]) - 1);       // - 1 for aa gjore om fra nummer til indeks
+        } catch (UgyldigListeindeks e) {
+            System.out.println("Error: pasientindeksfeil. " + e);
+            continue;
+        }
+        
+        Lege lege = null;
+        int reit = 0;
+
+        if (deler.length > 4) {
+            reit = Integer.parseInt(deler[4]);
+        }
+
+        for (Lege l : leger) {
+            if (l.hentNavn().equals(deler[1])) {
+                lege = l;
+            }
+        }
+
+        if (lege == null) {
+            System.out.println("Navneerror: legen " + deler[1] + " er ikke i systemet.");
+            continue;
+        }
+
+        if (deler[3].equals("hvit")) {
+
+            try {
+            
+                Resept nyResept = lege.skrivHvitResept(legemiddel, pasient, reit);
+                resepter.leggTil(nyResept);
+                pasient.nyResept(nyResept);
+
+            } catch(UlovligUtskrift e) {
+                System.out.println("Error: " + e);
+            }
+
+        } else if (deler[3].equals("blaa")) {
+
+            try {
+                Resept nyResept = lege.skrivBlaaResept(legemiddel, pasient, reit);
+                resepter.leggTil(nyResept);
+                pasient.nyResept(nyResept);
+
+
+            } catch(UlovligUtskrift e) {
+                System.out.println("Error: " + e);
+            }
+            
+        } else if (deler[3].equals("militaer")) {
+
+            try {
+                Resept nyResept = lege.skrivMilResept(legemiddel, pasient);
+                resepter.leggTil(nyResept);  
+                pasient.nyResept(nyResept);
+
+            } catch(UlovligUtskrift e) {
+                System.out.println("Error: " + e);
+            }
+
+        } else if (deler[3].equals("p")) {
+
+            try {
+
+                Resept nyResept = lege.skrivPResept(legemiddel, pasient, reit);
+                resepter.leggTil(nyResept);  
+                pasient.nyResept(nyResept);
+                                
+            } catch(UlovligUtskrift e) {
+                System.out.println("Error: " + e);
+            }
+
+        } else {
+            System.out.println("Navneerror: resepttype " + deler[3] + " stoettes ikke.");
+            continue;
+        }
+    }
+
+        */
+
+
+
     }
 
     public static void leggTilLegemiddel(Scanner sc){
