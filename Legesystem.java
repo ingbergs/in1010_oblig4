@@ -21,7 +21,7 @@ public class Legesystem {
     public static void main(String[] args){
 
         lesFraFil("legedata.txt");
-        // lesFraFil("nyStorFil.txt");
+        //lesFraFil("nyStorFil.txt");
 
         meny();
 
@@ -270,14 +270,6 @@ public class Legesystem {
 
         for (int i = 0; i < s.length(); i++) {
 
-            if (i == 0 && s.charAt(i) == '-') {
-                if (s.length() == 1) {
-                    return false;
-                } else {
-                    continue;
-                }
-            }
-
             if (i != 0 && i != (s.length() - 1) && s.charAt(i) == '.') {
                 if (!punktum) {
                     punktum = true;
@@ -324,7 +316,7 @@ public class Legesystem {
                 skrivStatistikk(sc);
             }
             else if (valg.equals("5")) {
-                System.out.println("Hva vil du at filen skal hete?\n");
+                System.out.println("\nHva vil du at filen skal hete?");
                 filnavn = sc.next();
                 skrivTilFil(filnavn + ".txt");
             }
@@ -401,31 +393,61 @@ public class Legesystem {
 
         sc.nextLine();                                          // Leser den gjenvaerende newline-characteren (\n) fra forrige .next()-kall
         navn = sc.nextLine();
+        System.out.print("Navn: ");
+        sc.nextLine();  
+        navn = sc.nextLine();
+        
+        while (navn.strip().equals("")) {
+            System.out.println("Legen maa ha et navn");
+            System.out.print("Navn: ");
+            sc.nextLine();                                          // Leser den gjenvaerende newline-characteren (\n) fra forrige .next()-kall
+            navn = sc.nextLine();
+        }
+        
+        navn = "Dr. " + navn;
         System.out.println("Spesialist (Y/N): ");
         spesialist = sc.next();
         if (spesialist.equals("Y") || spesialist.equals("y")){
             System.out.println("KontrollID: ");
             kontID = sc.next();
             nyLege = new Spesialist(navn, kontID);
-            } else{
+            } else {
                 nyLege = new Lege(navn);
             }
         leger.leggTil(nyLege);
         System.out.println("\n" + navn + " ble lagt til.\n");
+        if (spesialist != "Y" && spesialist != "N" && spesialist != "n"){
+            System.out.println(navn + " er ikke spesialist.\n");
+        }
     }
 
     public static void leggTilPasient(Scanner sc){
-        String navn;
-        String fodselsnummer;
+        String navn = "";
+        String fodselsnummer = "";
         Pasient nyPasient;
 
-        System.out.println("Navn: ");
-        sc.nextLine();                                          // Leser den gjenvaerende newline-characteren (\n) fra forrige .next()-kall
+        System.out.println("\nNavn: ");
+        sc.nextLine();                                    // Leser den gjenvaerende newline-characteren (\n) fra forrige .next()-kall
         navn = sc.nextLine();
+        
+        while (navn.strip().equals("")) {
+            System.out.println("Vennligst skriv et navn!\nNavn: ");
+            navn = sc.nextLine();
+        }
+        
         System.out.println("Fodselsnummer: ");
-        fodselsnummer = sc.next();
+        fodselsnummer = sc.nextLine();
+        //sc.nextLine(); 
+
+        while(fodselsnummer.strip().equals("")) {
+            System.out.println("Vennligst skriv et fodselsnummer!\nFodselsnummer: ");
+            //sc.nextLine(); 
+            fodselsnummer = sc.nextLine();
+        }
+
         nyPasient = new Pasient(navn, fodselsnummer);
         pasienter.leggTil(nyPasient);
+        System.out.println(navn + " lagt til i system.");
         
     }
 
@@ -436,77 +458,114 @@ public class Legesystem {
         String type = null;
         int reit = 0;
         boolean funnet = false;
-        int inp;
-        String temp;
-        Resept nyResept=null;
+        int inpInt;
+        String inpStr;
+        Resept nyResept = null;
 
-        System.out.println("Hvilket legemiddel skal resepten vaere for?");
+        System.out.println("\nHvilket legemiddel skal resepten vaere for?");
         for (Legemiddel l : legemidler) {
-            System.out.println(l.hentId()+ ":" + l.hentNavn() + " , " + l.hentVirkestoff() + " mg");
+            System.out.println(l.hentId()+ ": " + l.hentNavn() + ", " + l.hentVirkestoff() + " mg");
         }
-        inp = sc.nextInt();
+
+        inpStr = sc.next();
+        while (!sjekkOmNumerisk(inpStr) || (sjekkOmNumerisk(inpStr) && Integer.parseInt(inpStr) > legemidler.stoerrelse())) {
+            System.out.println("\nVennligst skriv et tall mellom 1 og " + legemidler.stoerrelse() + ".");
+            inpStr = sc.next();
+        }
+
+        inpInt = Integer.parseInt(inpStr);
+        
         for (Legemiddel l : legemidler) {
-            if (l.hentId()==inp && !funnet){
+            if (l.hentId()==inpInt && !funnet){
                 legemiddel=l;
                 funnet=true;
             }
         }
         funnet = false;
 
-        System.out.println("Hvilken pasient skal resepten vaere for?");
+        System.out.println("\nHvilken pasient skal resepten vaere for?");
         for (Pasient p : pasienter) {
             System.out.println(p.hentID()+ ":" + p.hentNavn() + " (fnr " + p.hentFodselsnr() + ")");
         }
-        inp = sc.nextInt();
+        
+        inpStr = sc.next();
+        while (!sjekkOmNumerisk(inpStr) || (sjekkOmNumerisk(inpStr) && Integer.parseInt(inpStr) > legemidler.stoerrelse())) {
+            System.out.println("\nVennligst skriv et tall mellom 1 og " + pasienter.stoerrelse() + ".");
+            inpStr = sc.next();
+        }
+
+        inpInt = Integer.parseInt(inpStr);
+
         for (Pasient p : pasienter) {
-            if (p.hentID()==inp && !funnet){
+            if (p.hentID()==inpInt && !funnet){
                 pasient=p;
                 funnet=true;
             }
         }
         funnet = false;
 
-        System.out.println("Hvilken lege skal skrive ut resepten?");
+        System.out.println("\nHvilken lege skal skrive ut resepten?");
         int teller = 1;
         for (Lege l : leger) {
-            System.out.println(teller+ ":" + l.hentNavn() ); //TO DO: legge til kontrollID?
+            System.out.println(teller+ ": " + l.hentNavn() ); //TO DO: legge til kontrollID?
             teller++;
         }
-        inp = sc.nextInt();
+        
+        inpStr = sc.next();
+
+        while (!sjekkOmNumerisk(inpStr) || (sjekkOmNumerisk(inpStr) && Integer.parseInt(inpStr) > legemidler.stoerrelse())) {
+            System.out.println("\nVennligst skriv et tall mellom 1 og " + leger.stoerrelse() + ".");
+            inpStr = sc.next();
+        }
+        
+        inpInt = Integer.parseInt(inpStr);
     
-        teller = 0;
+        teller = 1;
         for (Lege l : leger) {
-            if (teller==inp && !funnet){
-                lege=l;
-                funnet=true;
+            if (teller == inpInt) {
+                lege = l;
             }
             teller ++;
         }
         funnet = false;
-        System.out.println(lege);
+        
+        System.out.println("\nVelg type resept:\nB: Blaa\nH: Hvit");
+        inpStr = sc.next();
 
-        System.out.println("Velg type resept:\nB: Blaa\nH: Hvit");
-        temp = sc.next();
-        if (temp.equals("B")){
+        while (!(inpStr.toLowerCase().equals("b") || inpStr.toLowerCase().equals("h"))) {
+            System.out.println("Vennligst skriv \"B\" eller \"H\".");
+            inpStr = sc.next();
+        }
+
+        if (inpStr.toLowerCase().equals("b")){
             type = "blaa";
-        } else if (temp.equals("H")){
-            System.out.println("\nM: Militaerresept\nP: P-resept\nV: Vanlig hvit");
-            temp = sc.next();
-            if (temp.equals("M")) {
+        } else if (inpStr.toLowerCase().equals("h")){
+
+            System.out.println("\nM: Militaerresept\nP: P-resept\nV: Vanlig");
+            inpStr = sc.next();
+
+            while (!(inpStr.toLowerCase().equals("m") || inpStr.toLowerCase().equals("p") || inpStr.toLowerCase().equals("v"))) {
+                System.out.println("Vennligst skriv \"M\", \"P\", eller \"V\".");
+                inpStr = sc.next();
+            }    
+
+            if (inpStr.toLowerCase().equals("m")) {
                 type = "militaer";
-            } else if (temp.equals("P")){
+            } else if (inpStr.toLowerCase().equals("p")){
                 type = "p";
             } else {
                 type = "hvit";
             }
-        } else {
-            System.out.println("Ugyldig input");
-            return; // haaper vi kommer tilbake til hovedmenyen
         }
 
         if (!type.equals("militaer")) {
-            System.out.println("Velg antall reit:");
-            reit = sc.nextInt();
+            System.out.println("\nVelg antall reit:");
+            inpStr = sc.next();
+            while (!sjekkOmNumerisk(inpStr)) {
+                System.out.println("Vennligst skriv et tall.");
+                inpStr = sc.next();
+            }
+            reit = Integer.parseInt(inpStr);
         }
 
         if (type.equals("blaa")) {
@@ -522,225 +581,33 @@ public class Legesystem {
         pasient.nyResept(nyResept);
 
         System.out.println("Vellykket opprettelse av\n" + nyResept);
-        
-
-
-
-
-        /* Edvin sin
-        String farge = "";
-        String type = "";
-        String s = "Hvilken type resept: ";
-        String hb = "\nH: Hvit \nB: Blaa";
-        String mp = "\nM: Militaerresept \nP: P-resept \nV: Vanlig hvit";
-        int tmp;
-
-        Pasient pasient = null;
-        Lege lege = null;
-        Legemiddel legemiddel = null;
-        int reit;
-
-        sc.nextLine();                                          // Leser den gjenvaerende newline-characteren (\n) fra forrige .next()-kall
-
-        String legeNavn = sc.nextLine();//TODO hvis tid. Mulighet for aa legge til lege hvis ikke i system.
-        while (lege != null) {
-            System.out.println("Navn paa utskrivende lege:");
-            for (Lege l : leger) {
-                if (l.hentNavn().toLowerCase().equals(legeNavn.toLowerCase())) {
-                    lege = l;
-                    break;
-                }
-            }
-                
-            if (lege == null){
-                System.out.println("Lege ikke i system.");
-            }
-        }
-
-        String pasientNavn = sc.nextLine();//TODO hvis tid. Mulighet for aa legge til pasient hvis ikke i system.
-        while (pasient != null) {
-            System.out.println("Navn paa pasient:");
-            for (Pasient p : pasienter) {
-                if (p.hentNavn().equals(pasientNavn)) {
-                    pasient = p;
-                    break;
-                }
-            }
-                
-            if (pasient == null){
-                System.out.println("Pasient ikke i system.");
-            }
-        }
-
-        String legemiddelNavn = sc.nextLine(); //TODO hvis tid. Mulighet for aa legge til legemiddel hvis ikke i system.
-        IndeksertListe<Legemiddel> tmpLegemidler = new IndeksertListe<>();
-        while (legemiddel != null) {
-            System.out.println("Navn paa legemiddel:");
-            for (Legemiddel lm : legemidler) {
-                if (lm.hentNavn().equals(legemiddelNavn)) {
-                    tmpLegemidler.leggTil(lm);
-                }
-            }
-            if (lege == null){
-                System.out.println("Legemiddel ikke i system.");
-            }
-        }
-
-        if (tmpLegemidler.stoerrelse() > 1) {
-            System.out.println("Hvilken av disse onsker du?");
-            int valg = 1; 
-            for (Legemiddel lm : tmpLegemidler) {
-                System.out.println(valg + "" + lm);
-                valg++;
-            }
-            tmp = sc.nextInt();
-            legemiddel = tmpLegemidler.hent(valg-1);
-            //TODO Brukeren maa faa velge mellom legemidlene med samme navn.
-        } else {legemiddel = tmpLegemidler.hent(0);}
-
-
-        
-        while (!(farge.equals("H") || farge.equals("B"))){
-            if (farge != "") {System.out.println("Vennligst skriv H eller B");}
-            System.out.println(s + hb);
-            farge = sc.next();
-        }
-        if (farge.equals("H")){
-            System.out.println(mp);
-            type = sc.next();
-            while(!(type.equals("M") || type.equals("P")|| type.equals("V"))){
-                if (type != "") {System.out.println("Vennligst skriv M, P eller V\n");} 
-                System.out.println(mp);
-                type = sc.next();
-            }
-            if (type.equals("M")) {
-                //legemiddel = new MilResept();
-            }
-        } else{
-                    
-        }
-        // Resept(Legemiddel legemiddel, Lege utskrivendeLege, Pasient pasient, int reit)
-
-        */
-
-        /* Sivert sin:
-        Legemiddel legemiddel = null;
-        Pasient pasient = null;
-
-        try {
-            legemiddel = legemidler.hent(Integer.parseInt(deler[0]) - 1);   // - 1 for aa gjoere om fra nummer til indeks
-        
-        } catch (UgyldigListeindeks e) {
-            System.out.println("Error: legemiddelindeksfeil. " + e);
-            continue;
-        }
-
-        try {
-            pasient = pasienter.hent(Integer.parseInt(deler[2]) - 1);       // - 1 for aa gjore om fra nummer til indeks
-        } catch (UgyldigListeindeks e) {
-            System.out.println("Error: pasientindeksfeil. " + e);
-            continue;
-        }
-        
-        Lege lege = null;
-        int reit = 0;
-
-        if (deler.length > 4) {
-            reit = Integer.parseInt(deler[4]);
-        }
-
-        for (Lege l : leger) {
-            if (l.hentNavn().equals(deler[1])) {
-                lege = l;
-            }
-        }
-
-        if (lege == null) {
-            System.out.println("Navneerror: legen " + deler[1] + " er ikke i systemet.");
-            continue;
-        }
-
-        if (deler[3].equals("hvit")) {
-
-            try {
-            
-                Resept nyResept = lege.skrivHvitResept(legemiddel, pasient, reit);
-                resepter.leggTil(nyResept);
-                pasient.nyResept(nyResept);
-
-            } catch(UlovligUtskrift e) {
-                System.out.println("Error: " + e);
-            }
-
-        } else if (deler[3].equals("blaa")) {
-
-            try {
-                Resept nyResept = lege.skrivBlaaResept(legemiddel, pasient, reit);
-                resepter.leggTil(nyResept);
-                pasient.nyResept(nyResept);
-
-
-            } catch(UlovligUtskrift e) {
-                System.out.println("Error: " + e);
-            }
-            
-        } else if (deler[3].equals("militaer")) {
-
-            try {
-                Resept nyResept = lege.skrivMilResept(legemiddel, pasient);
-                resepter.leggTil(nyResept);  
-                pasient.nyResept(nyResept);
-
-            } catch(UlovligUtskrift e) {
-                System.out.println("Error: " + e);
-            }
-
-        } else if (deler[3].equals("p")) {
-
-            try {
-
-                Resept nyResept = lege.skrivPResept(legemiddel, pasient, reit);
-                resepter.leggTil(nyResept);  
-                pasient.nyResept(nyResept);
-                                
-            } catch(UlovligUtskrift e) {
-                System.out.println("Error: " + e);
-            }
-
-        } else {
-            System.out.println("Navneerror: resepttype " + deler[3] + " stoettes ikke.");
-            continue;
-        }
-    }
-
-        */
-
-
-
     }
 
     public static void leggTilLegemiddel(Scanner sc){
-        String navn;
+        String navn = "";
         int pris;
         double dose;
         int styrke=0;
         Legemiddel nyttLegemiddel;
 
-        String s = "Hva slags legemiddel?\nV: Vanlig\nVD: Vanedannende\nN: Narkotisk";
+        String s = "\nHva slags legemiddel?\nV: Vanlig\nVD: Vanedannende\nN: Narkotisk";
 
         System.out.println(s);
         String valg = sc.next();
-        while (!(valg.equals("V") || valg.equals("VD") || valg.equals("N"))){
+        while (!(valg.toLowerCase().equals("v") || valg.toLowerCase().equals("vd") || valg.toLowerCase().equals("n"))){
             System.out.println("Velg V, VD eller N.\n");
             System.out.println(s);
             valg = sc.next();
         }
 
-        System.out.print("Navn: ");
-
-        sc.nextLine();                                          // Leser den gjenvaerende newline-characteren (\n) fra forrige .next()-kall
-        navn = sc.nextLine(); 
-        System.out.println();
+        System.out.print("\nNavn: ");
+        sc.nextLine();                      // Leser den gjenvaerende newline-characteren (\n) fra forrige .next()-kall
+        navn = sc.nextLine();
+        
+        while (navn.strip().equals("")) {
+            System.out.println("Vennligst skriv et navn!\nNavn:");
+            navn = sc.nextLine();
+        }
         
         while (true) {
             System.out.print("Pris: ");
@@ -753,7 +620,7 @@ public class Legesystem {
         }
 
         while (true) {
-            System.out.print("Dose: ");
+            System.out.print("Mendge virkestoff(mg): ");
             try {
                 dose = Double.parseDouble(sc.next());
                 break;
@@ -761,7 +628,7 @@ public class Legesystem {
                 System.out.println("Ugyldig dose >:(");
             }   
         }
-        while (true && (!(valg.equals("V")))) {
+        while (true && (!(valg.toLowerCase().equals("v")))) {
             System.out.print("Styrke: ");
             try {
                 styrke = Integer.parseInt(sc.next());
@@ -771,51 +638,66 @@ public class Legesystem {
             }   
         }
         
-        if (valg.equals("VD")){
+        if (valg.toLowerCase().equals("vd")){
             nyttLegemiddel = new Vanedannende(navn, pris, dose, styrke);
-        } else if (valg.equals("N")){
+        } else if (valg.toLowerCase().equals("n")){
             nyttLegemiddel = new Narkotisk(navn, pris, dose, styrke);
         } else {
             nyttLegemiddel = new Vanlig(navn, pris, dose);
         }
 
         legemidler.leggTil(nyttLegemiddel);
+        System.out.println(navn + " lagt til i system.");
     }
+    
 
     public static void brukResept(Scanner sc) {        
         Pasient valgtPasient=null;
         Resept valgtResept=null;
         int inp;
+        String inpStr;
         boolean pasientFunnet=false;
         boolean reseptFunnet=false;
         //Scanner sc = new Scanner(System.in);
 
-        System.out.println("Hvilken pasient vil du se resepter for?");
+        System.out.println("\nHvilken pasient vil du se resepter for?");
         for (Pasient pasient : pasienter) {
+            if (pasient.hentReseptStabel().stoerrelse() > 0){      
             System.out.println(pasient.hentID()+ ":" + pasient.hentNavn() + " (fnr " + pasient.hentFodselsnr() + ")");
+        }  
         }
-        inp = sc.nextInt();
+        inpStr = sc.next();
+        while (!sjekkOmNumerisk(inpStr) || (sjekkOmNumerisk(inpStr) && Integer.parseInt(inpStr) > pasienter.stoerrelse()) || (sjekkOmNumerisk(inpStr) && Integer.parseInt(inpStr) <= 0)){
+            System.out.println("\nVennligst oppgi et gyldig heltall");
+            inpStr = sc.next();
+        }
+        inp = Integer.parseInt(inpStr);
         for (Pasient pasient : pasienter) {
             if (pasient.hentID()==inp && !pasientFunnet){
                 valgtPasient=pasient;
                 pasientFunnet=true;
             }
-        }
-
+        }   
+        
         System.out.println("Valgt pasient: " + valgtPasient.hentNavn() + " (fnr " + valgtPasient.hentFodselsnr() + ")\n"); //Navn + fodselsnummer
         Stabel<Resept> pasientResepter = valgtPasient.hentReseptStabel();
         if (pasientResepter.stoerrelse()==0) {
             System.out.println("Ingen resepter");
         } else {
-            System.out.println("Hvilken resept vil du bruke?");
+            System.out.println("\nHvilken resept vil du bruke?");
             
-            int teller=0;
+            int teller=1; 
             for (Resept resept : pasientResepter) {
                 System.out.println(teller+ ":" + resept.hentLegemiddel().hentNavn() + " ("+ resept.hentReit() + " reit)");
                 teller++;
             }
-            inp = sc.nextInt();
-            teller=0;
+            inpStr = sc.next();
+            while(!sjekkOmNumerisk(inpStr) || (sjekkOmNumerisk(inpStr) && Integer.parseInt(inpStr) > pasientResepter.stoerrelse())|| (sjekkOmNumerisk(inpStr) && Integer.parseInt(inpStr) <= 0)){
+                System.out.println("\nVennligst oppgi et gyldig heltall");
+                inpStr = sc.next();
+            }
+            inp = Integer.parseInt(inpStr);
+            teller=1;
             for (Resept resept : pasientResepter) {
                 if (teller==inp && !reseptFunnet){
                     valgtResept=resept;
@@ -824,9 +706,9 @@ public class Legesystem {
                 teller++;
             }
             if (valgtResept.bruk()){
-                System.out.println("Brukte resept paa " + valgtResept.hentLegemiddel().hentNavn()+ ". Antall gjenvaerende reit: " + valgtResept.hentReit() + "\n");
+                System.out.println("\nBrukte resept paa " + valgtResept.hentLegemiddel().hentNavn()+ ". Antall gjenvaerende reit: " + valgtResept.hentReit() + "\n");
             } else {
-                System.out.println("Kunne ikke bruke resept paa "+ valgtResept.hentLegemiddel().hentNavn()+ " (ingen gjenvaerende reit).");
+                System.out.println("\nKunne ikke bruke resept paa "+ valgtResept.hentLegemiddel().hentNavn()+ " (ingen gjenvaerende reit).");
             }
         }
     }
@@ -886,7 +768,7 @@ public class Legesystem {
                         continue;
                     }
 
-                    System.out.println("Navn:\t\t\t" + lege.hentNavn() + "\nAntall utskrevne narkotiske resepter:\t" + teller);
+                    System.out.println("Navn:\t\t\t\t\t" + lege.hentNavn() + "\nAntall utskrevne narkotiske resepter:\t" + teller);
                 }
                 
             } else if (valg.equals("4")) {  // Navn paa alle pasienter som har minst en gyldig resept paa narkotisk + antallet per pasient
@@ -905,7 +787,7 @@ public class Legesystem {
                         continue;
                     }
 
-                    System.out.println("Navn:\t\t\t" + pasient.hentNavn() + "\nAntall utskrevne narkotiske resepter:\t" + teller);
+                    System.out.println("Navn:\t\t\t\t\t" + pasient.hentNavn() + "\nAntall utskrevne narkotiske resepter:\t" + teller);
                 }
 
             } else {
@@ -917,9 +799,7 @@ public class Legesystem {
     public static void skrivTilFil(String filnavn) {
         String s;
         PrintWriter f = null;
-        //Narkotisk narkotisk;
-        //Vanedannende vanedannede;
-        //Spesialist spesialist;
+
         try {
             f = new PrintWriter(filnavn); 
         } catch (Exception e) {
@@ -939,7 +819,7 @@ public class Legesystem {
                 s+=",narkotisk," + narkotisk.hentPris() + "," + narkotisk.hentVirkestoff() + "," + narkotisk.hentNarkotiskStyrke();
             } else if(legemiddel instanceof Vanedannende){
                 Vanedannende vanedannende = (Vanedannende)legemiddel;
-                s += ",vanedannende"+ vanedannende.hentPris() + "," + vanedannende.hentVirkestoff() + "," + vanedannende.hentVanedannendeStyrke();
+                s += ",vanedannende,"+ vanedannende.hentPris() + "," + vanedannende.hentVirkestoff() + "," + vanedannende.hentVanedannendeStyrke();
             } else {
                 s+=",vanlig"+ legemiddel.hentPris() + "," + legemiddel.hentVirkestoff();
             }
