@@ -1,0 +1,30 @@
+Sivert generell: not case sensitive
+
+
+leggTilResept: Får ingen feilmelding når jeg skriver tall som er større enn det som er oppgitt som mulig
+    \n før spørsmål
+    mellomrom mellom tall: og navn på legemiddel
+    sjekke om input er numerisk
+
+brukResept: 
+    Programmet slutter dersom man skriver noe annet enn integer//samme skjer for "hvilken resept vil du bruke"
+    kunne oppgitt kun pasienter som har resepter?
+    \n
+
+leggTilLege: hva skjer hvis man skriver noe annet enn Y/n
+    Legge til Dr. automatisk i navnet til ny lege
+    feilmelding hvis man ikke oppgir navn?
+
+leggTilPasient: bekrefte at pasient er lagt til
+    feilmelding hvis man ikke oppgir navn?
+
+[Edvin] leggTilLegemiddel: legg til bekreftelse på at det er lagt til
+    feilmelding hvis man ikke oppgir navn?
+    Dose -> virkestoff(mengde)?
+
+skrivStatistikk:
+    Litt feil tab-ing (mangler to før navn) i utskrift
+
+skrivTilFil:
+    mangler newline før første prompt
+    rare formateringsfeil i Legemidler
